@@ -1,9 +1,2 @@
-asgiref==3.5.0
-comtypes==1.1.11
-Django==4.0.4
-product==0.1.1.1
-pypiwin32==223
-pyttsx3==2.90
-pywin32==304
-sqlparse==0.4.2
-tzdata==2022.1
+pywebio
+tinydb
