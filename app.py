@@ -7,6 +7,7 @@ from pywebio.output import *
 from pywebio import start_server
 from datetime import date, timedelta, datetime
 from tinydb import TinyDB, Query
+from functools import partial
 import time
 import re
 
@@ -40,8 +41,10 @@ def login():
     if len(results) == 1 and results[0].get("password") == credentials['password']:
         if results[0].get("user_type") == 'admin':
             admin_options(credentials['username'], results[0].get("name"))
+        elif results[0].get("user_type") == 'driver':
+            driver_options(credentials['username'], results[0].get("name"))
         else:
-            create_ride(credentials['username'], results[0].get("name"))
+            user_options(credentials['username'], results[0].get("name"))
     else:
         popup("Invalid username and/or password.", "Redirecting to welcome page.",
               closable=True)
@@ -90,23 +93,137 @@ def signup():
     if agree[0] == 'I agree to terms and conditions':
         create_ride(user_data['username'], user_data['name'])
 
-def admin_options(username, name):
-    admin_task = actions('Welcome Admin @{username}', ['View all bookings', 'Book a ride for myself'],
-                                help_text='Choose one of the two options to proceed.')
+def driver_options(username, name):
+    admin_task = actions(f'Welcome Driver @{username}', ['View all bookings', 'View my bookings', 'View finished bookings', 'Book a ride for myself', 'Logout'],
+                                help_text='Choose one of the three options to proceed.')
+    # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
 
     if admin_task == 'Book a ride for myself':
+        clear()
         create_ride(username, name)
+        driver_options(username, name)
+    elif admin_task == 'Logout':
+        clear()
+        welcome()
+    elif admin_task == 'View all bookings':
+        clear()
+        display_table = [['Name', 'User ID', 'Date', 'Time', 'Destination', 'Remarks', 'Status', 'Driver', 'Action']]
+        for row in bookings:
+            if row['status'] == 'new':
+                display_table.append([
+                    row['name'], row['username'],
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'],
+                    row['assigned_driver']])
+
+                print(row)
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+        put_table(display_table)
+        driver_options(username, name)
+    elif admin_task == 'View my bookings':
+        clear()
+        display_table = [['Name', 'User ID', 'Date', 'Time', 'Destination', 'Remarks', 'Status', 'Driver', 'Action']]
+        for row in bookings:
+            if row['assigned_driver'] == username and row['status'] != 'done':
+                display_table.append([
+                    row['name'], row['username'],
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
+                    put_buttons(['Done'], onclick=partial(update_status, row=row, username=username, name=name))])
+
+                print(row)
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+        put_table(display_table)
+
+        driver_options(username, name)
+    elif admin_task == 'View finished bookings':
+        clear()
+        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
+        for row in bookings:
+            if row['assigned_driver'] == username and row['status'] == 'done':
+                display_table.append( [
+                    row['name'], row['username'],
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
+                    put_buttons(['Done'], onclick=partial(update_status, row = row, username = username, name = name))])
+
+                print(row)
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+        put_table(display_table)
+
+        driver_options(username, name)
+
+def update_status(choice, row, username, name):
+    put_text("You click %s button ar row %s" % (choice, row))
+    bookings.update({'status': 'done'}, User.name == row['name'])
+    # username = row['username']
+    # name = row['name']
+    print(username,name)
+    clear()
+    display_table = [['Name', 'User ID', 'Date', 'Time', 'Destination', 'Remarks', 'Status', 'Driver', 'Action']]
+    for row in bookings:
+        if row['assigned_driver'] == username:
+            display_table.append([
+                row['name'], row['username'],
+                row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
+                put_buttons(['Done'], onclick=partial(update_status, row = row, username = username, name = name))])
+
+            print(row)
+    # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+    put_table(display_table)
+    driver_options(username, name)
+
+
+def user_options(username, name):
+    admin_task = actions(f'Welcome User @{username}', ['View my bookings', 'Book a ride for myself', 'Logout'],
+                                help_text='Choose one of the three options to proceed.')
+    # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+
+    if admin_task == 'Book a ride for myself':
+        clear()
+        create_ride(username, name)
+        user_options(username, name)
+    elif admin_task == 'Logout':
+        clear()
+        welcome()
     else:
-        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver']]
+        clear()
+        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
+        for row in bookings:
+            if row['username'] == username:
+                display_table.append( [
+                    row['name'], row['username'],
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver']])
+
+                print(row)
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+        put_table(display_table)
+
+        user_options(username, name)
+
+
+def admin_options(username, name):
+    admin_task = actions(f'Welcome Admin @{username}', ['View all bookings', 'Book a ride for myself', 'Logout'],
+                                help_text='Choose one of the three options to proceed.')
+    # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+
+    if admin_task == 'Book a ride for myself':
+        clear()
+        create_ride(username, name)
+        admin_options(username, name)
+    elif admin_task == 'Logout':
+        clear()
+        welcome()
+    else:
+        clear()
+        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
         for row in bookings:
             display_table.append( [
                 row['name'], row['username'],
                 row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver']])
 
             print(row)
-
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
         put_table(display_table)
-        put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+
+        admin_options(username, name)
 
 
 
@@ -157,7 +274,7 @@ def create_ride(username, name):
           closable=True)
 
 
-    create_ride(username, name)
+    # create_ride(username, name)
 
 def show_ride_request(ride_details):
     put_table([['Name', 'User ID', 'Date', 'Time'], [
