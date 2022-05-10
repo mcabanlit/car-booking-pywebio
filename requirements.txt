@@ -1,2 +1,3 @@
 pywebio
 tinydb
+cowpy==1.0.3
