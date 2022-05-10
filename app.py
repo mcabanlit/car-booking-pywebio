@@ -19,7 +19,7 @@ bookings = db.table('BOOKINGS')
 
 def welcome():
     choose_onboarding = actions('Welcome', ['Login', 'Signup'],
-                                help_text='Choose one of the two options to proceed.')
+                                help_text='Choose one of the options to proceed.')
 
     if choose_onboarding == 'Login':
         login()
@@ -80,6 +80,11 @@ def signup():
 
     ], validate=check_form)
 
+    # Create a radio button
+    user_type = radio("User Type", options=['Driver', 'Passenger'], required=True)
+
+    user_type = user_type.lower()
+
     # Create a checkbox
     agree = checkbox("Agreement", options=[
         'I agree to terms and conditions'], required=True)
@@ -91,11 +96,29 @@ def signup():
     #       closable=True)
     print(agree)
     if agree[0] == 'I agree to terms and conditions':
-        create_ride(user_data['username'], user_data['name'])
+        last_row = users.get(doc_id=len(users))
+        print(last_row["user_id"])
+        new_user_id = int(last_row["user_id"]) + 1
+        users.insert({'user_id': new_user_id,
+                         'username': user_data['username'],
+                         'name': user_data['name'],
+                         'password': user_data['password'],  # string(datetime.date(datetime.now())),
+                         'phone': user_data['phone'],  # string(datetime.time(datetime.now())),
+                         'email': user_data['email'],
+                         'birthdate': user_data['birthdate'],
+                         'user_type': user_type})
+
+
+        if user_type == 'driver':
+            driver_options(user_data['username'], user_data['name'])
+        else:
+            create_ride(user_data['username'], user_data['name'])
+            user_options(user_data['username'], user_data['name'])
+
 
 def driver_options(username, name):
     admin_task = actions(f'Welcome Driver @{username}', ['View all bookings', 'View my bookings', 'View finished bookings', 'Book a ride for myself', 'Logout'],
-                                help_text='Choose one of the three options to proceed.')
+                                help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
 
     if admin_task == 'Book a ride for myself':
@@ -113,7 +136,8 @@ def driver_options(username, name):
                 display_table.append([
                     row['name'], row['username'],
                     row['date'], row['time'], row['destination'], row['remarks'], row['status'],
-                    row['assigned_driver']])
+                    row['assigned_driver'],
+                    put_buttons(['Book'], onclick=partial(update_driver, row=row, username=username, name=name))])
 
                 print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -136,13 +160,12 @@ def driver_options(username, name):
         driver_options(username, name)
     elif admin_task == 'View finished bookings':
         clear()
-        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
+        display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver']]
         for row in bookings:
             if row['assigned_driver'] == username and row['status'] == 'done':
                 display_table.append( [
                     row['name'], row['username'],
-                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
-                    put_buttons(['Done'], onclick=partial(update_status, row = row, username = username, name = name))])
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver']])
 
                 print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -150,16 +173,43 @@ def driver_options(username, name):
 
         driver_options(username, name)
 
-def update_status(choice, row, username, name):
+
+def update_driver(choice, row, username, name):
     put_text("You click %s button ar row %s" % (choice, row))
-    bookings.update({'status': 'done'}, User.name == row['name'])
+    bookings.update({'assigned_driver': username, 'status': 'booked'}, User.booking_id == row['booking_id'])
+    toast("Mark as booked.")
     # username = row['username']
     # name = row['name']
     print(username,name)
     clear()
     display_table = [['Name', 'User ID', 'Date', 'Time', 'Destination', 'Remarks', 'Status', 'Driver', 'Action']]
     for row in bookings:
-        if row['assigned_driver'] == username:
+        if row['status'] == 'new':
+            display_table.append([
+                row['name'], row['username'],
+                row['date'], row['time'], row['destination'], row['remarks'], row['status'],
+                row['assigned_driver'],
+                put_buttons(['Book'], onclick=partial(update_driver, row=row, username=username, name=name))])
+
+            print(row)
+    # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+    put_table(display_table)
+
+    driver_options(username, name)
+
+
+
+def update_status(choice, row, username, name):
+    put_text("You click %s button ar row %s" % (choice, row))
+    bookings.update({'status': 'done'}, User.booking_id == row['booking_id'])
+    toast("Marked as done.")
+    # username = row['username']
+    # name = row['name']
+    print(username,name)
+    clear()
+    display_table = [['Name', 'User ID', 'Date', 'Time', 'Destination', 'Remarks', 'Status', 'Driver', 'Action']]
+    for row in bookings:
+        if row['assigned_driver'] == username and row['status'] != 'done':
             display_table.append([
                 row['name'], row['username'],
                 row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
@@ -173,7 +223,7 @@ def update_status(choice, row, username, name):
 
 def user_options(username, name):
     admin_task = actions(f'Welcome User @{username}', ['View my bookings', 'Book a ride for myself', 'Logout'],
-                                help_text='Choose one of the three options to proceed.')
+                                help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
 
     if admin_task == 'Book a ride for myself':
@@ -188,9 +238,10 @@ def user_options(username, name):
         display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
         for row in bookings:
             if row['username'] == username:
-                display_table.append( [
+                display_table.append([
                     row['name'], row['username'],
-                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver']])
+                    row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
+                    put_buttons(['Cancel Request'], onclick=partial(cancel_request, row=row, username=username, name=name))])
 
                 print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -198,10 +249,33 @@ def user_options(username, name):
 
         user_options(username, name)
 
+def cancel_request(choice, row, username, name):
+    # put_text("You click %s button ar row %s" % (choice, row))
+    results = users.search(User.username == username)
+    user_type = ''
+    if len(results) > 0:
+        user_type = results[0].get("user_type")
+    print("User " + user_type)
+    if user_type == 'passenger':
+        bookings.update({'status': 'cancelled by user'}, User.booking_id == row['booking_id'])
+    elif user_type == 'admin':
+        bookings.update({'status': 'cancelled by admin'}, User.booking_id == row['booking_id'])
+
+    toast("Booking request cancelled.")
+    # username = row['username']
+    # name = row['name']
+    print(username, name)
+    clear()
+
+    if user_type == 'passenger':
+        user_options(username, name)
+    elif user_type == 'admin':
+        admin_options(username, name)
+
 
 def admin_options(username, name):
-    admin_task = actions(f'Welcome Admin @{username}', ['View all bookings', 'Book a ride for myself', 'Logout'],
-                                help_text='Choose one of the three options to proceed.')
+    admin_task = actions(f'Welcome Admin @{username}', ['View all bookings', 'View all users','Book a ride for myself', 'Logout'],
+                                help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
 
     if admin_task == 'Book a ride for myself':
@@ -211,13 +285,27 @@ def admin_options(username, name):
     elif admin_task == 'Logout':
         clear()
         welcome()
+    elif admin_task == 'View all users':
+        clear()
+        display_table = [['ID', 'Name', 'Username', 'Phone', 'Email', 'Birthdate', 'User Type']]
+        for row in users:
+            display_table.append([
+                row['user_id'], row['name'],
+                row['username'], row['phone'], row['email'], row['birthdate'], row['user_type']])
+
+            print(row)
+        # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
+        put_table(display_table)
+
+        admin_options(username, name)
     else:
         clear()
         display_table = [['Name', 'User ID', 'Date', 'Time','Destination','Remarks','Status', 'Driver', 'Action']]
         for row in bookings:
             display_table.append( [
                 row['name'], row['username'],
-                row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver']])
+                row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
+                put_buttons(['Cancel Request'],onclick=partial(cancel_request, row=row, username=username, name=name))])
 
             print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -245,6 +333,10 @@ def check_form(user_data):
 
 
 def create_ride(username, name):
+    # print(bookings[len(bookings)]["booking_id"])
+    last_row = bookings.get(doc_id=len(bookings))
+    print(last_row["booking_id"])
+    new_booking_id = int(last_row["booking_id"]) + 1
     ride_details = input_group("Create a Ride Request", [
         input('Name: ', name='name', placeholder='First, Last', value = name),
         input('User ID: ', name='username', readonly=True, placeholder=username, value=username),
@@ -256,7 +348,7 @@ def create_ride(username, name):
 
     print(ride_details['booking_date'], ride_details['booking_time'])
 
-    bookings.insert({'booking_id': 1,
+    bookings.insert({'booking_id': new_booking_id,
                      'username': ride_details['username'],
                      'name': ride_details['name'],
                      'date': ride_details['booking_date'],  # string(datetime.date(datetime.now())),
@@ -267,7 +359,7 @@ def create_ride(username, name):
                      'assigned_driver': ''})
 
     popup("Ride request succesfully sent.",
-          f"A rider will contact you shortly. \n \n \nRide details:\nName: @{ride_details['username']}\nName: {ride_details['name']}\
+          f"A rider will contact you shortly. \n \n \nRide details:\nUsername: @{ride_details['username']}\nName: {ride_details['name']}\
                 \nDate: {str(ride_details['booking_date'])}\nTime: {ride_details['booking_time']}\
                 \nDestination: {ride_details['booking_destination']}\
                 \nRemarks: {ride_details['booking_remarks']}",
