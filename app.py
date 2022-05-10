@@ -1,5 +1,3 @@
-# A simple script to calculate BMI
-
 
 import pywebio
 from pywebio.input import *
@@ -49,10 +47,6 @@ def login():
         popup("Invalid username and/or password.", "Redirecting to welcome page.",
               closable=True)
         welcome()
-    # if credentials['username'] == 'admin':
-    #     create_ride(credentials['username'])
-    # else:
-    #     create_ride(credentials['username'])
 
 
 def signup():
