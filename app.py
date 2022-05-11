@@ -416,13 +416,13 @@ def bmi():
             break
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", type = int, default = 8080)
-    args = parser.parse_args()
-
-    start_server(welcome, port = args.port)
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("-p", "--port", type = int, default = 8080)
+#     args = parser.parse_args()
+#
+#     start_server(welcome, port = args.port)
 
 # Uncomment when running in local
-# if __name__ == '__main__':
-#     pywebio.start_server(welcome, port=55)
+if __name__ == '__main__':
+    pywebio.start_server(welcome, port=55)
