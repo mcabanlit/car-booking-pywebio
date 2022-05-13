@@ -1,1 +1,1 @@
-web: python app.py --port 7171
+web: python app.py

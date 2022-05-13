@@ -447,4 +447,4 @@ def bmi():
 
 # Uncomment when running in local
 if __name__ == '__main__':
-    pywebio.start_server(welcome, port=55)
+    pywebio.start_server(welcome, port=7171)
