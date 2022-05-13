@@ -390,7 +390,6 @@ def select_date(set_value):
         put_buttons(['Today'], onclick=[lambda: set_value(date.today(), 'Today')])
         put_buttons(['Yesterday'], onclick=[lambda: set_value(date.today() - timedelta(days=1), 'Yesterday')])
 
-
 def bmi():
     height = input("Input your height(cm)：", type=FLOAT)
     weight = input("Input your weight(kg)：", type=FLOAT)
@@ -416,13 +415,14 @@ def bmi():
             break
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", type = int, default = 8080)
-    args = parser.parse_args()
-
-    start_server(welcome, port = args.port)
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("-p", "--port", type = int, default = 8080)
+#     args = parser.parse_args()
+#
+#     start_server(welcome, port = args.port)
 
 # Uncomment when running in local
-# if __name__ == '__main__':
-#     pywebio.start_server(welcome, port=55)
+
+if __name__ == '__main__':
+    pywebio.start_server(welcome, port=55)

@@ -14,8 +14,30 @@ User = Query()
 users = db.table('USERS')
 bookings = db.table('BOOKINGS')
 
+'''
+Returns the sum of two decimal numbers in binary digits.
+
+        Parameters:
+                a (int): A decimal integer
+                b (int): Another decimal integer
+
+        Returns:
+                binary_sum (str): Binary string of the sum of a and b
+'''
+
 
 def welcome():
+    '''
+    Displays
+
+        Parameters:
+                None
+
+        Returns:
+                None
+    '''
+
+    # Choose from either login or signup
     choose_onboarding = actions('Welcome', ['Login', 'Signup'],
                                 help_text='Choose one of the options to proceed.')
 
