@@ -11,6 +11,7 @@ from tinydb import TinyDB, Query
 from functools import partial
 import time
 import re
+import argparse
 
 app = Flask(__name__)
 
@@ -444,12 +445,14 @@ def bmi():
 
 
 
+
 # Uncomment when running in local
 # if __name__ == '__main__':
 #     pywebio.start_server(welcome, port=7171)
 
-app.add_url_rule('/booking', 'webio_view', webio_view(welcome),
-                 methods=['GET', 'POST', 'OPTIONS'])
+
+app.add_url_rule('/booking', 'webio_view', webio_view(welcome), methods=['GET', 'POST', 'OPTIONS'])
+
 
 # app.run(host='localhost', port=80)
 
