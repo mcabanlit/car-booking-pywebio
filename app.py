@@ -1,5 +1,8 @@
 
 import pywebio
+from pywebio.platform.flask import webio_view
+from pywebio import STATIC_PATH
+from flask import Flask, send_from_directory
 from pywebio.input import *
 from pywebio.output import *
 from pywebio import start_server
@@ -8,6 +11,8 @@ from tinydb import TinyDB, Query
 from functools import partial
 import time
 import re
+
+app = Flask(__name__)
 
 db = TinyDB('db.json')
 User = Query()
@@ -438,13 +443,19 @@ def bmi():
             break
 
 
+
+# Uncomment when running in local
+# if __name__ == '__main__':
+#     pywebio.start_server(welcome, port=7171)
+
+app.add_url_rule('/booking', 'webio_view', webio_view(welcome),
+                 methods=['GET', 'POST', 'OPTIONS'])
+
+# app.run(host='localhost', port=80)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port", type=int, default=8080)
     args = parser.parse_args()
 
     start_server(welcome, port=args.port)
-
-# Uncomment when running in local
-# if __name__ == '__main__':
-#     pywebio.start_server(welcome, port=7171)
