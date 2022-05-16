@@ -1,4 +1,3 @@
-
 import pywebio
 from pywebio.platform.flask import webio_view
 from pywebio import STATIC_PATH
@@ -13,38 +12,26 @@ import time
 import re
 import argparse
 
+# Initialize Flask object
 app = Flask(__name__)
 
+# Initialize TinyDB
 db = TinyDB('db.json')
 User = Query()
 users = db.table('USERS')
 bookings = db.table('BOOKINGS')
 
-'''
-Returns the sum of two decimal numbers in binary digits.
-
-        Parameters:
-                a (int): A decimal integer
-                b (int): Another decimal integer
-
-        Returns:
-                binary_sum (str): Binary string of the sum of a and b
-'''
-
 
 def welcome():
-    '''
-    Displays
+    """
+    Displays the welcome options for the car booking app. Would require users to either login or signup.
 
-        Parameters:
-                None
-
-        Returns:
-                None
-    '''
+    Returns:
+            None
+    """
 
     # Choose from either login or signup
-    choose_onboarding = actions('Welcome', ['Login', 'Signup'],
+    choose_onboarding = actions('Welcome to Car Booking App', ['Login', 'Signup'],
                                 help_text='Choose one of the options to proceed.')
 
     if choose_onboarding == 'Login':
@@ -54,6 +41,12 @@ def welcome():
 
 
 def login():
+    '''
+    Login options for existing users.
+
+    Returns:
+            None
+    '''
     credentials = input_group("Login to your account", [
         input('Username', name='username', type=TEXT,
               required=True, PlaceHolder="@username"),
@@ -61,9 +54,11 @@ def login():
               required=True, PlaceHolder="Password")
     ])
 
+    # Checks for existing users that matches the username
     results = users.search(User.username == credentials['username'])
     print(results)
-    # print(results[0].get("password"))
+
+    # Checks the password and the user type
     if len(results) == 1 and results[0].get("password") == credentials['password']:
         if results[0].get("user_type") == 'admin':
             admin_options(credentials['username'], results[0].get("name"))
@@ -78,6 +73,14 @@ def login():
 
 
 def signup():
+    """
+    Sign up page / option for new users.
+
+    Returns:
+            None
+    """
+
+    # Input user credentials
     user_data = input_group("Signup", [
         input('Username', name='username', type=TEXT,
               required=True, PlaceHolder="@username", validate=check_username),
@@ -102,12 +105,11 @@ def signup():
 
     ], validate=check_form)
 
-    # Create a radio button
+    # Create a radio button asking for user type
     user_type = radio("User Type", options=['Driver', 'Passenger'], required=True)
-
     user_type = user_type.lower()
 
-    # Create a checkbox
+    # Create a checkbox for agreeing with terms and conditions
     agree = checkbox("Agreement", options=[
         'I agree to terms and conditions'], required=True)
 
@@ -130,7 +132,8 @@ def signup():
                          'birthdate': user_data['birthdate'],
                          'user_type': user_type})
 
-
+        # Proceed to specific options per user but if the user is
+        # not a driver, then proceed to creating a ride.
         if user_type == 'driver':
             driver_options(user_data['username'], user_data['name'])
         else:
@@ -139,6 +142,21 @@ def signup():
 
 
 def driver_options(username, name):
+    """
+    Options for user type: driver
+    The drivers are allowed to
+        (1) View all new bookings (status = new)
+        (2) View their accepted bookings (driver = @username)
+        (3) View finished bookings (status = done and driver = @username)
+        (4) Book a ride for themselves
+
+    Parameters:
+        username (string): username of the user in session
+        name (string): Their full name in the form
+
+    Returns:
+        None
+    """
     admin_task = actions(f'Welcome Driver @{username}', ['View all bookings', 'View my bookings', 'View finished bookings', 'Book a ride for myself', 'Logout'],
                                 help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -197,6 +215,21 @@ def driver_options(username, name):
 
 
 def update_driver(choice, row, username, name):
+    """
+    Update the driver of a particular booking.
+    When the driver clicks on the Accept Booking button, this function would
+    update the assigned driver.
+
+    Parameters:
+        choice (string): the choice or name of the button that was clicked
+        row (dictionary): the whole row of the booking that needs updating
+        username (string): username of the user in session
+        name (string): their full name in the form
+
+    Returns:
+        None
+    """
+
     put_text("You click %s button ar row %s" % (choice, row))
     bookings.update({'assigned_driver': username, 'status': 'booked'}, User.booking_id == row['booking_id'])
     toast(f"Marked as booked for driver @{username}.")
