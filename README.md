@@ -12,11 +12,11 @@ There are three main user types:
 2. Driver
 3. Admin
 
-You may signup for the first two user types, but if you require admin access, you may use the below:<br />
+You may signup for the first two user types (`passenger` and `driver`), but if you require admin access, you may use the below:<br />
 _Username:_ `admin` <br />
 _Password:_ `admin` <br />
 
-For the other two user types, you may use the below accordingly: <br />
+For testing of the other two user types, you may use the below accordingly: <br />
 Driver User <br />
 _Username:_ `driver` <br />
 _Password:_ `driver` <br />
