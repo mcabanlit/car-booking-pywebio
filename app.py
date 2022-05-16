@@ -434,11 +434,12 @@ def check_form(user_data):
         user_data (dictionary): the data being typed in the form
 
     Returns:
-        value (str): The error message
+        value (str): The error message to be sent
     """
     # For checking Email, whether Valid or not.
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-    # For checking Name
+
+    # For checking Names
     if user_data['name'].isdigit():
         return ('name', 'Invalid name! Name should not be numeric.')
 
