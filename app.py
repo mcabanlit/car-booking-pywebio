@@ -124,8 +124,8 @@ def signup():
         users.insert({'user_id': new_user_id,
                          'username': user_data['username'],
                          'name': user_data['name'],
-                         'password': user_data['password'],  # string(datetime.date(datetime.now())),
-                         'phone': user_data['phone'],  # string(datetime.time(datetime.now())),
+                         'password': user_data['password'],
+                         'phone': user_data['phone'],
                          'email': user_data['email'],
                          'birthdate': user_data['birthdate'],
                          'user_type': user_type})
@@ -159,7 +159,7 @@ def driver_options(username, name):
                     row['name'], row['username'],
                     row['date'], row['time'], row['destination'], row['remarks'], row['status'],
                     row['assigned_driver'],
-                    put_buttons(['Book'], onclick=partial(update_driver, row=row, username=username, name=name))])
+                    put_buttons(['Accept Booking'], onclick=partial(update_driver, row=row, username=username, name=name))])
 
                 print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -173,7 +173,7 @@ def driver_options(username, name):
                 display_table.append([
                     row['name'], row['username'],
                     row['date'], row['time'], row['destination'], row['remarks'], row['status'], row['assigned_driver'],
-                    put_buttons(['Done'], onclick=partial(update_status, row=row, username=username, name=name))])
+                    put_buttons(['Mark as Done'], onclick=partial(update_status, row=row, username=username, name=name))])
 
                 print(row)
         # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -199,7 +199,7 @@ def driver_options(username, name):
 def update_driver(choice, row, username, name):
     put_text("You click %s button ar row %s" % (choice, row))
     bookings.update({'assigned_driver': username, 'status': 'booked'}, User.booking_id == row['booking_id'])
-    toast("Mark as booked.")
+    toast(f"Marked as booked for driver @{username}.")
     # username = row['username']
     # name = row['name']
     print(username,name)
