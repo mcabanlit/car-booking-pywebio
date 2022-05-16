@@ -16,6 +16,12 @@ You may signup for the first two user types, but if you require admin access, yo
 _Username:_ `admin` <br />
 _Password:_ `admin` <br />
 
+_Username:_ `driver` <br />
+_Password:_ `driver` <br />
+
+_Username:_ `passenger` <br />
+_Password:_ `passenger` <br />
+
 Here is the signup page for reference:
 ![image](https://user-images.githubusercontent.com/102983286/167591247-ac2b09dc-5597-4a57-bf27-e75383cf2f19.png)
 
