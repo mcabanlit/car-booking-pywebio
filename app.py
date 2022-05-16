@@ -24,6 +24,8 @@ bookings = db.table('BOOKINGS')
 
 def welcome():
     """
+    Car Booking Application
+
     Displays the welcome options for the car booking app. Would require users to either login or signup.
 
     Returns:
