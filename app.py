@@ -257,6 +257,21 @@ def update_driver(choice, row, username, name):
 
 
 def update_status(choice, row, username, name):
+    """
+    Updates the status of a booking
+    When the driver clicks on the Mark as Done button, this function will update
+    the booking status as done.
+
+    Parameters:
+        choice (string): the choice or name of the button that was clicked
+        row (dictionary): the whole row of the booking that needs updating
+        username (string): username of the user in session
+        name (string): their full name in the form
+
+    Returns:
+        None
+    """
+
     put_text("You click %s button ar row %s" % (choice, row))
     bookings.update({'status': 'done'}, User.booking_id == row['booking_id'])
     toast("Marked as done.")
@@ -279,6 +294,19 @@ def update_status(choice, row, username, name):
 
 
 def user_options(username, name):
+    """
+    Options for user type: passenger
+    The passengers are allowed to
+        (1) View all bookings (booking where username = passenger)
+        (2) Book a ride for themselves
+
+    Parameters:
+        username (string): username of the user in session
+        name (string): Their full name in the form
+
+    Returns:
+        None
+    """
     admin_task = actions(f'Welcome User @{username}', ['View my bookings', 'Book a ride for myself', 'Logout'],
                                 help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -307,6 +335,18 @@ def user_options(username, name):
         user_options(username, name)
 
 def cancel_request(choice, row, username, name):
+    """
+    Update the status of a booking to cancelled
+
+    Parameters:
+        choice (string): the choice or name of the button that was clicked
+        row (dictionary): the whole row of the booking that needs updating
+        username (string): username of the user in session
+        name (string): their full name in the form
+
+    Returns:
+        None
+    """
     # put_text("You click %s button ar row %s" % (choice, row))
     results = users.search(User.username == username)
     user_type = ''
@@ -331,6 +371,20 @@ def cancel_request(choice, row, username, name):
 
 
 def admin_options(username, name):
+    """
+    Options for user type: admin
+    The drivers are allowed to
+        (1) View all bookings
+        (2) View all users
+        (3) Book a ride for themselves
+
+    Parameters:
+        username (string): username of the user in session
+        name (string): Their full name in the form
+
+    Returns:
+        None
+    """
     admin_task = actions(f'Welcome Admin @{username}', ['View all bookings', 'View all users','Book a ride for myself', 'Logout'],
                                 help_text='Choose one of the options to proceed.')
     # put_buttons([dict(label='Home', value='s', color='success')], onclick=admin_options(username, name))
@@ -371,28 +425,47 @@ def admin_options(username, name):
         admin_options(username, name)
 
 
-
-
 def check_form(user_data):
+    """
+    This function is used for validating the data being entered in the user
+    signup form.
+
+    Parameters:
+        user_data (dictionary): the data being typed in the form
+
+    Returns:
+        value (str): The error message
+    """
     # For checking Email, whether Valid or not.
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-    # for checking Name
+    # For checking Name
     if user_data['name'].isdigit():
-        return ('name', 'Invalid name!')
+        return ('name', 'Invalid name! Name should not be numeric.')
 
-    # for checking Email
+    # For checking Email
     if not (re.search(regex, user_data['email'])):
         return ('email', 'Invalid email!')
 
-    # for matching Passwords
+    # For matching Passwords
     if user_data['password'] != user_data['password_c']:
         return ('password_c', "Please make sure your passwords match.")
 
 
 def create_ride(username, name):
+    """
+    Form for creating a ride / booking request
+
+    Parameters:
+        username (string): username of the user in session
+        name (string): Their full name in the form
+
+    Returns:
+        None
+    """
     # print(bookings[len(bookings)]["booking_id"])
     last_row = bookings.get(doc_id=len(bookings))
     print(last_row["booking_id"])
+    # Creates a form in pywebio that allows users to enter booking details
     new_booking_id = int(last_row["booking_id"]) + 1
     ride_details = input_group("Create a Ride Request", [
         input('Name: ', name='name', placeholder='First, Last', value = name),
@@ -405,6 +478,7 @@ def create_ride(username, name):
 
     print(ride_details['booking_date'], ride_details['booking_time'])
 
+    # Inserts what was entered into the TinyDB db.json
     bookings.insert({'booking_id': new_booking_id,
                      'username': ride_details['username'],
                      'name': ride_details['name'],
@@ -421,23 +495,52 @@ def create_ride(username, name):
                 \nDestination: {ride_details['booking_destination']}\
                 \nRemarks: {ride_details['booking_remarks']}",
           closable=True)
-
-
     # create_ride(username, name)
 
+
 def show_ride_request(ride_details):
+    """
+    Places the ride details in a table format
+
+    Parameters:
+        ride_details (dictionary): The ride details in dictionary format
+
+    Returns:
+        None
+    """
     put_table([['Name', 'User ID', 'Date', 'Time'], [
         ride_details['name'], ride_details['username'],
         ride_details['booking_date'], ride_details['booking_time']]])
 
 
 def check_username(username):
+    """
+    Checks if there is already an existing username.
+
+    Parameters:
+        username (string): The username that was entered in the form and to be rechecked
+            against existing usernames
+
+    Returns:
+        value (str): The error message
+    """
+
     results = users.search(User.username == username)
     if len(results) > 0:
-        return 'Choose another username.'
+        return 'Username not available. Please choose another username.'
 
 
 def check_booking_date(booking_date):
+    """
+    Checks the value of the booking_date entered.
+
+    Parameters:
+        booking_date (string): The booking date that was entered in the form
+
+    Returns:
+        value (str): The error message
+    """
+
     entered_day = datetime.strptime(booking_date, "%Y-%m-%d")
     present_day = datetime.now()
     if entered_day.date() < present_day.date():
