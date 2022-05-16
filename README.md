@@ -16,9 +16,12 @@ You may signup for the first two user types, but if you require admin access, yo
 _Username:_ `admin` <br />
 _Password:_ `admin` <br />
 
+For the other two user types, you may use the below accordingly:
+Driver User
 _Username:_ `driver` <br />
 _Password:_ `driver` <br />
 
+Passenger User
 _Username:_ `passenger` <br />
 _Password:_ `passenger` <br />
 
