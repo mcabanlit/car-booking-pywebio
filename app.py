@@ -33,7 +33,7 @@ def welcome():
     """
 
     # Choose from either login or signup
-    choose_onboarding = actions('Welcome to Car Booking App', ['Login', 'Signup'],
+    choose_onboarding = actions('Welcome to Car Booking App 🚖', ['Login', 'Signup'],
                                 help_text='Choose one of the options to proceed.')
 
     if choose_onboarding == 'Login':
