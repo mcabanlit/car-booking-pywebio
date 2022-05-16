@@ -12,7 +12,7 @@ There are three main user types:
 2. Driver
 3. Admin
 
-You may signup for the first two user types (`passenger` and `driver`), but if you require admin access, you may use the below:<br />
+You may signup for the first two user types (passenger and driver), but if you require admin access, you may use the below:<br />
 _Username:_ `admin` <br />
 _Password:_ `admin` <br />
 
