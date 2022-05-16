@@ -32,7 +32,7 @@ There is currenly no session handling being implemented in the code so refreshin
 Each user type has a different set of options.
 
 1. Passenger
-* ![image](https://user-images.githubusercontent.com/102983286/167591577-bc98e004-368d-4530-a92d-2953da291647.png)
+* ![image](https://user-images.githubusercontent.com/102983286/168568203-23e14d71-1fe3-403c-92e2-0062f8117696.png)
 2. Driver
 * ![image](https://user-images.githubusercontent.com/102983286/167591721-6d4eaf34-4a9e-4228-af54-651ad20651cd.png)
 3. Admin
