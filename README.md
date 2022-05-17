@@ -1,7 +1,6 @@
 ## Car Booking Web App 
 Car booking web app implemented using `PyWebIO` and `TinyDB`. <br />
 PyWebIO is a rich text terminal and can be used to build simple web applications or browser-based GUI applications. TinyDB is a very tiny database that stores all the data as a Python dictionary. <br />
-_Note: This app has not been successfully deployed to Heroku and Vercel._
 
 You may run index.py from the root folder in your local for now. 
 You will be asked to either login or sign up for a new account.
