@@ -1,4 +1,5 @@
-## Car Booking Web App 
+## Car Booking Web App [![gcash donation][1]][2] [![paypal donation][3]][4]
+
 Car booking web app implemented using `PyWebIO` and `TinyDB`. <br />
 PyWebIO is a rich text terminal and can be used to build simple web applications or browser-based GUI applications. TinyDB is a very tiny database that stores all the data as a Python dictionary. <br />
 
@@ -38,3 +39,9 @@ Each user type has a different set of options.
 * ![image](https://user-images.githubusercontent.com/102983286/167591613-3d1d37e9-2743-42a8-994b-ae178dccc7d0.png)
 
 Thank you and please bare with my newbie Python web skills.
+
+[1]: https://img.shields.io/badge/donate-gcash-green
+[2]: https://drive.google.com/file/d/1JeMx5_S7VBBT-3xO7mV9YOMfESeV3eKa/view
+
+[3]: https://img.shields.io/badge/donate-paypal-blue
+[4]: https://www.paypal.com/paypalme/mcabanlitph
