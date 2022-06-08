@@ -26,11 +26,16 @@ def welcome():
     """
     Car Booking Application
 
+    Book a ride with our handsome drivers.
     Displays the welcome options for the car booking app. Would require users to either login or signup.
 
     Returns:
             None
     """
+    img = open('images/car-booking.png', 'rb').read()
+    with use_scope('scope1', clear=True):
+        put_image(img)
+    put_text("")
 
     # Choose from either login or signup
     choose_onboarding = actions('Welcome to Car Booking App 🚖', ['Login', 'Signup'],
