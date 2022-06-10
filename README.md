@@ -4,6 +4,7 @@ Car booking web app implemented using `PyWebIO` and `TinyDB`. <br />
 PyWebIO is a rich text terminal and can be used to build simple web applications or browser-based GUI applications. TinyDB is a very tiny database that stores all the data as a Python dictionary. <br />
 
 You will be asked to either login or sign up for a new account.
+![image](https://user-images.githubusercontent.com/102983286/172987911-c2857f92-f6fa-425d-9442-26c0c338e853.png)
 
 
 There are three main user types:
