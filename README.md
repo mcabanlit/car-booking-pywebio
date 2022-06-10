@@ -1,5 +1,7 @@
 ## Car Booking Web App [![gcash donation][1]][2] [![paypal donation][3]][4]
 
+[![license][5]][6] [![python version][7]][8] [![pywebio version][9]][10] [![build][11]][12] 
+
 Car booking web app implemented using `PyWebIO` and `TinyDB`. <br />
 PyWebIO is a rich text terminal and can be used to build simple web applications or browser-based GUI applications. TinyDB is a very tiny database that stores all the data as a Python dictionary. <br />
 
@@ -45,3 +47,15 @@ Thank you and please bare with my newbie Python web skills.
 
 [3]: https://img.shields.io/badge/donate-paypal-blue
 [4]: https://www.paypal.com/paypalme/mcabanlitph
+
+[5]: https://img.shields.io/badge/license-GNUGPLv3-blue.svg
+[6]: https://github.com/mcabanlit/heart-disease/blob/main/LICENSE.md
+
+[7]: https://img.shields.io/badge/python-3.10-blue
+[8]: https://www.python.org/
+
+[9]: https://img.shields.io/badge/pywebio-1.6.1-dark
+[10]: https://pywebio.readthedocs.io/en/latest/
+
+[11]: https://img.shields.io/badge/build-passing-green
+[12]: https://car-booking-pywebio.herokuapp.com/
